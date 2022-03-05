@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <form action="https://192.168.1.7:5000/api/users/login" method="post" autocomplete="on" >
+
+        <label for="Username">Username</label> 
+        <br>
+        <input type="text" name="Username" id="Username" required>
+        <br>
+        <label for="Password">Password</label>
+        <br>
+        <input type="password" name="Password" id="Password" required>
+
+        <br><br>
+        <input type="submit" value="Login">
+        <br><br>
+
+        <p>Dont have an account?</p>
+        <a href="http://127.0.0.1:5500/Register.html" target="_blank">Join us</a>
+
+
+    </form>
+    
+</body>
+</html>

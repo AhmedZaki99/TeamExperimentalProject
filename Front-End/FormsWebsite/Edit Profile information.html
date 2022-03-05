@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+</head>
+<body>
+
+    <form action="https://192.168.1.7:5000/api/users/edit" method="post">
+
+        <label for="Fname">First Name</label>
+        <br>
+            <input type="text" name="FirstName" id="Fname" >
+        <br><br>
+        <!-- separator -->
+        <label for="Lname">Last Name</label>
+        <br>
+            <input type="text" name="LastName" id="Lname" >
+        <br><br>
+        <!-- separator -->
+        <label for="Username">Username</label>
+        <br>
+            <input type="text" name="Username" id="Username" >
+        <br> <br>
+        <!-- separator -->
+        <label for="Old Password">Old Password</label>
+        <br>
+            <input type="password" name="Old Password" id="Old Password" >
+        <br><br>
+         <!-- separator -->
+        <label for="New Password">New Password</label>
+        <br>
+            <input type="password" name="Password" id="New Password" >
+        <br><br>
+        <!-- separator -->
+        <label for="confirm pass">Confirm Password</label>
+        <br>
+            <input type="password" name="Confirm" id="Confirm pass" >
+        <br><br>
+        <!-- separator -->
+        <label for="E-mail">E-mail</label>
+        <br>
+        <input type="Email" name="Email" id="E-mail" >
+        <br><br>
+        <!-- separator -->
+        <label for="Birthdate">Birth Date</label>
+        <br>
+        <input type="date" name="BirthDate" >
+        <br><br>
+        <!-- separator -->
+        <input type="submit" value="Update" >   
+        <br><br>
+        
+        <a href="http://127.0.0.1:5500/Delete%20account.html" target="_blank">Delete your account</a>
+    
+
+    </form>
+
+</body>
+</html>
