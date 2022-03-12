@@ -1,0 +1,61 @@
+header,
+footer {
+  background-color: rgb(61, 61, 61);
+  font-size: 18px;
+  margin: -10px;
+  color: rgb(204, 204, 204);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  padding: 10px;
+}
+footer {
+  padding: 10px;
+}
+.h1 {
+  text-align: left;
+  text-transform: uppercase;
+  margin: 10px 10px;
+}
+
+.copyright,
+.Footer1 {
+  text-align: center;
+  text-transform: capitalize;
+}
+footer div p {
+  margin-right: -35px;
+}
+.Menu li a,
+.Sign a {
+  text-decoration: none;
+  color: red;
+}
+.Menu,
+.Sign {
+  text-align: right;
+  list-style-type: none;
+}
+.Sign {
+  padding: 5px;
+}
+menu {
+  background-color: rgb(230, 228, 228);
+  display: inline-block;
+  width: 100%;
+  margin: -5px -10px;
+}
+.Footer1 ul {
+  list-style-type: none;
+}
+.Footer1 a {
+  text-decoration: none;
+  color: rgb(204, 204, 204);
+  background-color: teal;
+  border-bottom: 5px solid rgb(9, 85, 85);
+  display: inline-block;
+  padding: 8px 5px;
+  margin: 5px;
+  width: 100px;
+}
