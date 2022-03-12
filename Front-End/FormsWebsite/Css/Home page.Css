@@ -1,8 +1,13 @@
+html,
+body {
+  margin: 0;
+}
+
 header,
 footer {
   background-color: rgb(61, 61, 61);
   font-size: 18px;
-  margin: -10px;
+  /* margin: -10px; */
   color: rgb(204, 204, 204);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -20,36 +25,36 @@ footer {
 }
 
 .copyright,
-.Footer1 {
+.footer1 {
   text-align: center;
   text-transform: capitalize;
 }
 footer div p {
   margin-right: -35px;
 }
-.Menu li a,
-.Sign a {
+.menu li a,
+.sign a {
   text-decoration: none;
   color: red;
 }
-.Menu,
-.Sign {
+.menu,
+.sign {
   text-align: right;
   list-style-type: none;
 }
-.Sign {
+.sign {
   padding: 5px;
 }
 menu {
   background-color: rgb(230, 228, 228);
   display: inline-block;
   width: 100%;
-  margin: -5px -10px;
+  margin: auto;
 }
-.Footer1 ul {
+.footer1 ul {
   list-style-type: none;
 }
-.Footer1 a {
+.footer1 a {
   text-decoration: none;
   color: rgb(204, 204, 204);
   background-color: teal;
