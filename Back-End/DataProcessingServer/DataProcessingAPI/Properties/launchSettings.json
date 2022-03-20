@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "ASPNet6": {
+    "DataProcessingAPI": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "applicationUrl": "https://0.0.0.0:5000",

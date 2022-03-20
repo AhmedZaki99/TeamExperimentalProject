@@ -2,7 +2,7 @@ using ASPNetCoreData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace ASPNet6
+namespace DataProcessingAPI
 {
     public class Program
     {
