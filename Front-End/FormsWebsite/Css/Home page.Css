@@ -1,0 +1,66 @@
+html,
+body {
+  margin: 0;
+}
+
+header,
+footer {
+  background-color: rgb(61, 61, 61);
+  font-size: 18px;
+  /* margin: -10px; */
+  color: rgb(204, 204, 204);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+header {
+  padding: 10px;
+}
+footer {
+  padding: 10px;
+}
+.h1 {
+  text-align: left;
+  text-transform: uppercase;
+  margin: 10px 10px;
+}
+
+.copyright,
+.footer1 {
+  text-align: center;
+  text-transform: capitalize;
+}
+footer div p {
+  margin-right: -35px;
+}
+.menu li a,
+.sign a {
+  text-decoration: none;
+  color: red;
+}
+.menu,
+.sign {
+  text-align: right;
+  list-style-type: none;
+}
+.sign {
+  padding: 5px;
+}
+menu {
+  background-color: rgb(230, 228, 228);
+  display: inline-block;
+  width: 100%;
+  margin: auto;
+}
+.footer1 ul {
+  list-style-type: none;
+}
+.footer1 a {
+  text-decoration: none;
+  color: rgb(204, 204, 204);
+  background-color: teal;
+  border-bottom: 5px solid rgb(9, 85, 85);
+  display: inline-block;
+  padding: 8px 5px;
+  margin: 5px;
+  width: 100px;
+}
