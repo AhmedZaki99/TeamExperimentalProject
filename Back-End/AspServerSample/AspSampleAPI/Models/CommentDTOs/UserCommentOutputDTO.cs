@@ -1,4 +1,5 @@
 ﻿using AspServerData;
+using System.Text.Json.Serialization;
 
 namespace AspSampleAPI.Models
 {
@@ -6,7 +7,10 @@ namespace AspSampleAPI.Models
     {
         #region Public Properties
 
+        [JsonPropertyOrder(1)]
         public string? AuthorName { get; set; }
+
+        [JsonPropertyOrder(2)]
         public string? AuthorFullName { get; set; }
 
         #endregion

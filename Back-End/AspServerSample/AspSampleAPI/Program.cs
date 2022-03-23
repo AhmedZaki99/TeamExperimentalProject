@@ -1,4 +1,3 @@
-using AspServerData;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,10 +30,13 @@ namespace AspSampleAPI
             builder.Services.AddControllers(options =>
                 options.SuppressAsyncSuffixInActionNames = false);
 
-            builder.Services.AddDbContext<ApplicationDbContext>(options => 
+            builder.Services.AddDbContext<AspServerData.ApplicationDbContext>(options => 
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+            builder.Services.AddScoped<IPasswordHasher<AspServerData.User>, PasswordHasher<AspServerData.User>>();
+
+            builder.Services.AddScoped<AspServerData.IUserStore, AspServerData.UserStore>();
         }
 
         private static void ConfigurePipeline(WebApplication app)

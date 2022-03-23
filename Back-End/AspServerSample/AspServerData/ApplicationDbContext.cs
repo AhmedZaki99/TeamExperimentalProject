@@ -46,10 +46,6 @@ namespace AspServerData
         public bool UserExists(int id) => Users.Any(u => u.UserId == id);
         public bool PostExists(int id) => Posts.Any(p => p.PostId == id);
 
-        public bool UserNameExists(string username) => Users.Any(u => u.UserName == username);
-        public bool UserEmailExists(string email) => Users.Any(u => u.Email == email);
-        public bool UserNameOrEmailExists(string username, string email) => Users.Any(u => u.UserName == username || u.Email == email);
-
         #endregion
 
     }

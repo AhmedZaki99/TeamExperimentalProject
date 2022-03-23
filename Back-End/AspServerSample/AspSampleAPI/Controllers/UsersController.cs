@@ -13,18 +13,16 @@ namespace AspSampleAPI.Controllers
         
         #region Dependencies
 
-        private readonly ApplicationDbContext _dbContext;
-        private readonly IPasswordHasher<User> _passwordHasher;
+        private readonly IUserStore _userStore;
         private readonly ILogger<UsersController> _logger;
 
         #endregion
 
         #region Constructor
 
-        public UsersController(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, ILogger<UsersController> logger)
+        public UsersController(IUserStore userStore, ILogger<UsersController> logger)
         {
-            _dbContext = dbContext;
-            _passwordHasher = passwordHasher;
+            _userStore = userStore;
             _logger = logger;
         }
 
@@ -39,14 +37,8 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserOutputDTO>>> ListUsersAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            per_page = per_page > 100 ? 100 : per_page;
-
-            return await _dbContext.Users.OrderBy(u => u.UserId)
-                                         .Skip((page - 1) * per_page)
-                                         .Take(per_page)
-                                         .Select(u => UserOutputDTO.Create(u))
-                                         .AsNoTracking()
-                                         .ToListAsync();
+            var users = await _userStore.ListUsersAsync(page, per_page);
+            return users.Select(u => UserOutputDTO.Create(u)).ToList();
         }
 
         /// <summary>
@@ -57,16 +49,11 @@ namespace AspSampleAPI.Controllers
         {
             //_logger.LogInformation("[{Time:HH:mm:ss.ffffff}] Fetching data for user {User}...", DateTime.Now, username);
 
-            var user = await _dbContext.Users.Include(u => u.Posts)
-                                                .ThenInclude(p => p.Comments)
-                                                    .ThenInclude(c => c.User)
-                                             .AsSplitQuery()
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(u => u.UserName == username);
+            var user = await _userStore.FindAndNavigateByUserNameAsync(username);
 
             //_logger.LogInformation("[{Time:HH:mm:ss.ffffff}] End of data processing for user {User}.", DateTime.Now, username);
 
-            if (user == null)
+            if (user is null)
             {
                 return NotFound();
             }
@@ -80,11 +67,11 @@ namespace AspSampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<UserOutputDTO>> CreateUserAsync([FromBody] UserCreateInputDTO userDTO)
         {
-            if (_dbContext.UserNameExists(userDTO.UserName!))
+            if (_userStore.UserNameExists(userDTO.UserName!))
             {
                 ModelState.AddModelError(nameof(userDTO.UserName), "Username already exists, make sure you provided a unique username.");
             }
-            if (_dbContext.UserEmailExists(userDTO.Email!))
+            if (_userStore.UserEmailExists(userDTO.Email!))
             {
                 ModelState.AddModelError(nameof(userDTO.Email), "Email already exists, make sure you provided a unique email.");
             }
@@ -93,11 +80,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var user = userDTO.Map();
-            user.PasswordHash = userDTO.Password != null ? _passwordHasher.HashPassword(user, userDTO.Password) : null;
-
-            _dbContext.Users.Add(user);
-            await _dbContext.SaveChangesAsync();
+            var user = await _userStore.CreateAsync(userDTO.Map(), userDTO.Password);
             
             return CreatedAtAction(nameof(GetUserAsync), new { username = user.UserName }, UserOutputDTO.Create(user));
         }
@@ -108,30 +91,24 @@ namespace AspSampleAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> LoginUserAsync([FromBody] UserLoginInputDTO userDTO)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == userDTO.UserName);
-            if (user == null)
+            var loginResult = await _userStore.LoginAsync(userDTO.UserName!, userDTO.Password!);
+
+            if (loginResult == LoginResult.UserNotFound)
             {
                 return NotFound();
             }
-
-            var verificationResult = user.PasswordHash == null ? 
-                                        PasswordVerificationResult.Failed : 
-                                        _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, userDTO.Password);
-
-            if (verificationResult == PasswordVerificationResult.Failed)
+            else if (loginResult == LoginResult.Failed)
             {
                 ModelState.AddModelError(nameof(userDTO.Password), "Incorrect Password.");
                 return ValidationProblem(title: "Login attempt failed.", modelStateDictionary: ModelState);
             }
 
-            user.LastSignedIn = DateTime.UtcNow;
-            await _dbContext.SaveChangesAsync();
-
+            var user = await _userStore.FindByUserNameAsync(userDTO.UserName!);
             return Ok(new
             {
                 status = 200,
                 title = "User logged in successfully.",
-                data = UserOutputDTO.Create(user)
+                data = UserOutputDTO.Create(user!)
             });
         }
 
@@ -142,8 +119,8 @@ namespace AspSampleAPI.Controllers
         [HttpPut("{username}")]
         public async Task<ActionResult<UserOutputDTO>> UpdateUserAsync([FromRoute] string username, [FromBody] UserUpdateInputDTO userDTO)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
-            if (user == null)
+            var user = await _userStore.FindByUserNameAsync(username);
+            if (user is null)
             {
                 return NotFound();
             }
@@ -156,10 +133,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            _dbContext.Entry(user).CurrentValues.SetValues(userDTO);
-            user.PasswordHash = userDTO.Password != null ? _passwordHasher.HashPassword(user, userDTO.Password) : user.PasswordHash;
-
-            await _dbContext.SaveChangesAsync();
+            await _userStore.UpdateAsync(userDTO.Update(user), userDTO.Password);
 
             return UserOutputDTO.Create(user);
         }
@@ -170,20 +144,23 @@ namespace AspSampleAPI.Controllers
         [HttpDelete("{username}")]
         public async Task<IActionResult> DeleteUserAsync(string username)
         {
-            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
-            if (user == null)
+            var deleteResult = await _userStore.DeleteAsync(username);
+
+            if (deleteResult == DeleteResult.UserNotFound)
             {
                 return NotFound();
             }
+            else if (deleteResult == DeleteResult.Failed)
+            {
+                return Problem(statusCode: 500, title: "Server error.", detail: "Failed to delete the user.");
+            }
 
-            _dbContext.Users.Remove(user);
-            await _dbContext.SaveChangesAsync();
-
+            var user = await _userStore.FindByUserNameAsync(username);
             return Ok(new
             {
                 status = "User deleted successfully.",
-                user.UserId,
-                user.UserName
+                user!.UserId,
+                user!.UserName
             });
         }
 

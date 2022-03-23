@@ -1,4 +1,5 @@
 ﻿using AspServerData;
+using System.Text.Json.Serialization;
 
 namespace AspSampleAPI.Models
 {
@@ -7,9 +8,14 @@ namespace AspSampleAPI.Models
 
         #region Public Properties
 
+        [JsonPropertyOrder(1)]
         public DateTime? DateCreated { get; set; }
+
+        [JsonPropertyOrder(2)]
         public DateTime? LastSignedIn { get; set; }
 
+
+        [JsonPropertyOrder(3)]
         public IEnumerable<CommentsPostOutputDTO>? Posts { get; set; }
 
         #endregion

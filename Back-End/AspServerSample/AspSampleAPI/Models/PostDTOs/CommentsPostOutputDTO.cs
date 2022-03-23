@@ -1,4 +1,5 @@
 ﻿using AspServerData;
+using System.Text.Json.Serialization;
 
 namespace AspSampleAPI.Models
 {
@@ -6,6 +7,7 @@ namespace AspSampleAPI.Models
     {
         #region Public Properties
 
+        [JsonPropertyOrder(1)]
         public IEnumerable<UserCommentOutputDTO>? Comments { get; set; }
 
         #endregion
