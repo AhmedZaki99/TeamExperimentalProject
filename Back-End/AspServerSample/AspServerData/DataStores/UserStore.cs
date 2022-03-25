@@ -36,15 +36,29 @@ namespace AspServerData
         }
 
         /// <summary>
+        /// Get User by Id, including all relational data; if any exists.
+        /// </summary>
+        public async Task<User?> FindAndNavigateByIdAsync(int id, bool track = false)
+        {
+            IQueryable<User> query = _dbContext.Users.Include(u => u.Posts)
+                                                        .ThenInclude(p => p.Comments)
+                                                            .ThenInclude(c => c.User)
+                                                     .AsSplitQuery();
+            if (!track)
+            {
+                query = query.AsNoTracking();
+            }
+            return await query.FirstOrDefaultAsync(u => u.UserId == id);
+        }
+
+        /// <summary>
         /// Get User by User name, if exists.
         /// </summary>
         public async Task<User?> FindByUserNameAsync(string username, bool track = false)
         {
-            if (track)
-            {
-                return await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
-            }
-            else return await _dbContext.Users.AsNoTracking().FirstOrDefaultAsync(u => u.UserName == username);
+            IQueryable<User> query = !track ? _dbContext.Users.AsNoTracking() : _dbContext.Users;
+
+            return await query.FirstOrDefaultAsync(u => u.UserName == username);
         }
 
         /// <summary>
@@ -56,23 +70,17 @@ namespace AspServerData
                                                         .ThenInclude(p => p.Comments)
                                                             .ThenInclude(c => c.User)
                                                      .AsSplitQuery();
-            if (track)
+            if (!track)
             {
-                return await query.FirstOrDefaultAsync(u => u.UserName == username);
+                query = query.AsNoTracking();
             }
-            else return await query.AsNoTracking().FirstOrDefaultAsync(u => u.UserName == username);
+            return await query.FirstOrDefaultAsync(u => u.UserName == username);
         }
 
-
         /// <summary>
-        /// Returns a list of top 100 users.
+        /// Returns a list of users by page and count; default is 30 users per page.
         /// </summary>
-        public Task<List<User>> ListUsersAsync() => ListUsersAsync(0, 100);
-
-        /// <summary>
-        /// Returns a list of users by page and count.
-        /// </summary>
-        public async Task<List<User>> ListUsersAsync(int page, int perPage)
+        public async Task<List<User>> ListUsersAsync(int page = 1, int perPage = 30)
         {
             perPage = perPage > 100 ? 100 : perPage;
 
@@ -119,7 +127,7 @@ namespace AspServerData
             var user = await _dbContext.Users.FindAsync(id);
             if (user is null)
             {
-                return DeleteResult.UserNotFound;
+                return DeleteResult.EntityNotFound;
             }
 
             _dbContext.Users.Remove(user);
@@ -134,7 +142,7 @@ namespace AspServerData
             var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.UserName == username);
             if (user is null)
             {
-                return DeleteResult.UserNotFound;
+                return DeleteResult.EntityNotFound;
             }
 
             _dbContext.Users.Remove(user);

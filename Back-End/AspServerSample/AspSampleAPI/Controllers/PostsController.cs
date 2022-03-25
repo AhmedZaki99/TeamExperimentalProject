@@ -12,15 +12,17 @@ namespace AspSampleAPI.Controllers
 
         #region Dependencies
 
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IPostStore _postStore;
+        private readonly IUserStore _userStore;
 
         #endregion
 
         #region Constructor
 
-        public PostsController(ApplicationDbContext dbContext)
+        public PostsController(IPostStore postStore, IUserStore userStore)
         {
-            _dbContext = dbContext;
+            _postStore = postStore;
+            _userStore = userStore;
         }
 
         #endregion
@@ -34,13 +36,9 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostOutputDTO>>> ListPostsAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            return await _dbContext.Posts.Include(p => p.User)
-                                         .OrderByDescending(p => p.DatePosted)
-                                         .Skip((page - 1) * per_page)
-                                         .Take(per_page)
-                                         .Select(p => PostOutputDTO.Create(p))
-                                         .AsNoTracking()
-                                         .ToListAsync();
+            var posts = await _postStore.ListPostsAsync(page, per_page, true);
+
+            return posts.Select(p => PostOutputDTO.Create(p)).ToList();
         }
 
         /// <summary>
@@ -49,12 +47,8 @@ namespace AspSampleAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentsPostOutputDTO>> GetPostAsync([FromRoute] int id)
         {
-            var post = await _dbContext.Posts.Include(p => p.User)
-                                             .Include(p => p.Comments)
-                                                .ThenInclude(c => c.User)
-                                             .AsNoTracking()
-                                             .FirstOrDefaultAsync(p => p.PostId == id);
-            if (post == null)
+            var post = await _postStore.FindAndNavigateByIdAsync(id);
+            if (post is null)
             {
                 return NotFound();
             }
@@ -67,8 +61,8 @@ namespace AspSampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PostOutputDTO>> CreatePostAsync([FromBody] PostCreateInputDTO postDTO)
         {
-            var user = await _dbContext.Users.FindAsync(postDTO.AuthorId);
-            if (user == null)
+            var user = await _userStore.FindByIdAsync((int)postDTO.AuthorId!);
+            if (user is null)
             {
                 ModelState.AddModelError(nameof(postDTO.AuthorId), "No user exists with the provided Author Id.");
             }
@@ -77,10 +71,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var post = postDTO.Map();
-
-            _dbContext.Posts.Add(post);
-            await _dbContext.SaveChangesAsync();
+            var post = await _postStore.CreateAsync(postDTO.Map());
 
             return CreatedAtAction(nameof(GetPostAsync), new { id = post.PostId }, PostOutputDTO.CreateExplicitly(post, user));
         }
@@ -100,16 +91,13 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var post = await _dbContext.Posts.FindAsync(id);
-            if (post == null)
+            var post = await _postStore.FindByIdAsync(id);
+            if (post is null)
             {
                 return NotFound();
             }
 
-            _dbContext.Entry(post).CurrentValues.SetValues(postDTO);
-            post.LastEdited = DateTime.UtcNow;
-
-            await _dbContext.SaveChangesAsync();
+            await _postStore.UpdateAsync(postDTO.Update(post));
 
             return NoContent();
         }
@@ -120,14 +108,16 @@ namespace AspSampleAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePostAsync([FromRoute] int id)
         {
-            var post = await _dbContext.Posts.FindAsync(id);
-            if (post == null)
+            var deleteResult = await _postStore.DeleteAsync(id);
+
+            if (deleteResult == DeleteResult.EntityNotFound)
             {
                 return NotFound();
             }
-
-            _dbContext.Posts.Remove(post);
-            await _dbContext.SaveChangesAsync();
+            else if (deleteResult == DeleteResult.Failed)
+            {
+                return Problem(statusCode: 500, title: "Server error.", detail: "Failed to delete the post.");
+            }
 
             return NoContent();
         }

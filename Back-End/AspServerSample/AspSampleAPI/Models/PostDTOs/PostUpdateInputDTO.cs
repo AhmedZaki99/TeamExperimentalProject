@@ -16,5 +16,21 @@ namespace AspSampleAPI.Models
         public string? Content { get; set; }
 
         #endregion
+
+        #region Helper Methods
+
+        public Post Update(Post post)
+        {
+            if (post.PostId != PostId)
+            {
+                throw new InvalidOperationException("Post id provided must match with the DTO.");
+            }
+            post.Caption = Caption;
+            post.Content = Content;
+
+            return post;
+        }
+
+        #endregion
     }
 }

@@ -15,5 +15,20 @@ namespace AspSampleAPI.Models
 
         #endregion
 
+        #region Helper Methods
+
+        public Comment Update(Comment comment)
+        {
+            if (comment.CommentId != CommentId)
+            {
+                throw new InvalidOperationException("Comment id provided must match with the DTO.");
+            }
+            comment.Content = Content;
+
+            return comment;
+        }
+
+        #endregion
+
     }
 }

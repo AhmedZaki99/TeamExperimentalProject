@@ -146,7 +146,7 @@ namespace AspSampleAPI.Controllers
         {
             var deleteResult = await _userStore.DeleteAsync(username);
 
-            if (deleteResult == DeleteResult.UserNotFound)
+            if (deleteResult == DeleteResult.EntityNotFound)
             {
                 return NotFound();
             }

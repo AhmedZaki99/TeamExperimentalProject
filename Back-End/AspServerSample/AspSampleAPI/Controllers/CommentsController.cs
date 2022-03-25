@@ -12,15 +12,19 @@ namespace AspSampleAPI.Controllers
 
         #region Dependencies
 
-        private readonly ApplicationDbContext _dbContext;
+        private readonly ICommentStore _commentStore;
+        private readonly IPostStore _postStore;
+        private readonly IUserStore _userStore;
 
         #endregion
 
         #region Constructor
 
-        public CommentsController(ApplicationDbContext dbContext)
+        public CommentsController(ICommentStore commentStore, IPostStore postStore, IUserStore userStore)
         {
-            _dbContext = dbContext;
+            _commentStore = commentStore;
+            _postStore = postStore;
+            _userStore = userStore;
         }
 
         #endregion
@@ -34,11 +38,9 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CommentOutputDTO>>> ListCommentsAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            return await _dbContext.Comments.OrderByDescending(c => c.DatePosted)
-                                            .Skip((page - 1) * per_page)
-                                            .Take(per_page)
-                                            .Select(c => CommentOutputDTO.Create(c))
-                                            .ToListAsync();
+            var comments = await _commentStore.ListCommentsAsync(page, per_page);
+
+            return comments.Select(c => CommentOutputDTO.Create(c)).ToList();
         }
 
         /// <summary>
@@ -47,8 +49,8 @@ namespace AspSampleAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentOutputDTO>> GetCommentAsync([FromRoute] int id)
         {
-            var comment = await _dbContext.Comments.FindAsync(id);
-            if (comment == null)
+            var comment = await _commentStore.FindByIdAsync(id);
+            if (comment is null)
             {
                 return NotFound();
             }
@@ -61,11 +63,11 @@ namespace AspSampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentOutputDTO>> CreateCommentAsync([FromBody] CommentCreateInputDTO commentDTO)
         {
-            if (!_dbContext.UserExists((int)commentDTO.AuthorId!))
+            if (!_userStore.UserExists((int)commentDTO.AuthorId!))
             {
                 ModelState.AddModelError(nameof(commentDTO.AuthorId), "No user exists with the provided Author Id.");
             }
-            if (!_dbContext.PostExists((int)commentDTO.PostId!))
+            if (!_postStore.PostExists((int)commentDTO.PostId!))
             {
                 ModelState.AddModelError(nameof(commentDTO.PostId), "No post exists with the provided Post Id.");
             }
@@ -74,10 +76,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var comment = commentDTO.Map();
-
-            _dbContext.Comments.Add(comment);
-            await _dbContext.SaveChangesAsync();
+            var comment = await _commentStore.CreateAsync(commentDTO.Map());
 
             return CreatedAtAction(nameof(GetCommentAsync), new { id = comment.CommentId }, CommentOutputDTO.Create(comment));
         }
@@ -97,16 +96,13 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var comment = await _dbContext.Comments.FindAsync(id);
-            if (comment == null)
+            var comment = await _commentStore.FindByIdAsync(id);
+            if (comment is null)
             {
                 return NotFound();
             }
 
-            _dbContext.Entry(comment).CurrentValues.SetValues(commentDTO);
-            comment.LastEdited = DateTime.UtcNow;
-
-            await _dbContext.SaveChangesAsync();
+            await _commentStore.UpdateAsync(commentDTO.Update(comment));
 
             return NoContent();
         }
@@ -117,14 +113,16 @@ namespace AspSampleAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCommentAsync([FromRoute] int id)
         {
-            var comments = await _dbContext.Comments.FindAsync(id);
-            if (comments == null)
+            var deleteResult = await _commentStore.DeleteAsync(id);
+
+            if (deleteResult == DeleteResult.EntityNotFound)
             {
                 return NotFound();
             }
-
-            _dbContext.Comments.Remove(comments);
-            await _dbContext.SaveChangesAsync();
+            else if (deleteResult == DeleteResult.Failed)
+            {
+                return Problem(statusCode: 500, title: "Server error.", detail: "Failed to delete the comment.");
+            }
 
             return NoContent();
         }

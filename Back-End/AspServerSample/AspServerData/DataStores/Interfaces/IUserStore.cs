@@ -11,6 +11,12 @@
         /// <returns></returns>
         Task<User?> FindByIdAsync(int id);
         /// <summary>
+        /// Get User by Id, including all relational data; if any exists.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Task<User?> FindAndNavigateByIdAsync(int id, bool track = false);
+        /// <summary>
         /// Get User by User name, if exists.
         /// </summary>
         /// <param name="userName"></param>
@@ -24,17 +30,12 @@
         Task<User?> FindAndNavigateByUserNameAsync(string username, bool track = false);
 
         /// <summary>
-        /// Returns a list of top 100 users.
-        /// </summary>
-        /// <returns></returns>
-        Task<List<User>> ListUsersAsync();
-        /// <summary>
-        /// Returns a list of users by page and count.
+        /// Returns a list of users by page and count; default is 30 users per page.
         /// </summary>
         /// <param name="page"></param>
         /// <param name="perPage"></param>
         /// <returns></returns>
-        Task<List<User>> ListUsersAsync(int page, int perPage);
+        Task<List<User>> ListUsersAsync(int page = 1, int perPage = 30);
 
         #endregion
 

@@ -11,6 +11,6 @@
     {
         Success,
         Failed,
-        UserNotFound
+        EntityNotFound
     }
 }

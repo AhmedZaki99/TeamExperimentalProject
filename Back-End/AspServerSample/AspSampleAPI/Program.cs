@@ -37,6 +37,8 @@ namespace AspSampleAPI
             builder.Services.AddScoped<IPasswordHasher<AspServerData.User>, PasswordHasher<AspServerData.User>>();
 
             builder.Services.AddScoped<AspServerData.IUserStore, AspServerData.UserStore>();
+            builder.Services.AddScoped<AspServerData.IPostStore, AspServerData.PostStore>();
+            builder.Services.AddScoped<AspServerData.ICommentStore, AspServerData.CommentStore>();
         }
 
         private static void ConfigurePipeline(WebApplication app)
