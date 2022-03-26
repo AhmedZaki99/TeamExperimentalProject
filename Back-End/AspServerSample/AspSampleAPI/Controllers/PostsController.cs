@@ -1,7 +1,6 @@
 ﻿using AspSampleAPI.Models;
 using AspServerData;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AspSampleAPI.Controllers
 {
@@ -36,7 +35,7 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostOutputDTO>>> ListPostsAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            var posts = await _postStore.ListPostsAsync(page, per_page, true);
+            var posts = await _postStore.ListPostsWithAuthorsAsync(page, per_page);
 
             return posts.Select(p => PostOutputDTO.Create(p)).ToList();
         }
@@ -47,7 +46,7 @@ namespace AspSampleAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentsPostOutputDTO>> GetPostAsync([FromRoute] int id)
         {
-            var post = await _postStore.FindAndNavigateByIdAsync(id);
+            var post = await _postStore.FindAndNavigateAsync(id);
             if (post is null)
             {
                 return NotFound();
@@ -61,7 +60,7 @@ namespace AspSampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<PostOutputDTO>> CreatePostAsync([FromBody] PostCreateInputDTO postDTO)
         {
-            var user = await _userStore.FindByIdAsync((int)postDTO.AuthorId!);
+            var user = await _userStore.FindAsync((int)postDTO.AuthorId!);
             if (user is null)
             {
                 ModelState.AddModelError(nameof(postDTO.AuthorId), "No user exists with the provided Author Id.");
@@ -91,7 +90,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var post = await _postStore.FindByIdAsync(id);
+            var post = await _postStore.FindAsync(id);
             if (post is null)
             {
                 return NotFound();

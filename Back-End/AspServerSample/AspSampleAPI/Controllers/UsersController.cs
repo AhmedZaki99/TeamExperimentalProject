@@ -1,8 +1,6 @@
 ﻿using AspSampleAPI.Models;
 using AspServerData;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AspSampleAPI.Controllers
 {
@@ -37,7 +35,7 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<UserOutputDTO>>> ListUsersAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            var users = await _userStore.ListUsersAsync(page, per_page);
+            var users = await _userStore.ListEntitiesAsync(page, per_page);
             return users.Select(u => UserOutputDTO.Create(u)).ToList();
         }
 

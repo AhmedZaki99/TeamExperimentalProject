@@ -1,7 +1,6 @@
 ﻿using AspSampleAPI.Models;
 using AspServerData;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AspSampleAPI.Controllers
 {
@@ -38,7 +37,7 @@ namespace AspSampleAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CommentOutputDTO>>> ListCommentsAsync([FromQuery] int page = 1, [FromQuery] int per_page = 30)
         {
-            var comments = await _commentStore.ListCommentsAsync(page, per_page);
+            var comments = await _commentStore.ListEntitiesAsync(page, per_page);
 
             return comments.Select(c => CommentOutputDTO.Create(c)).ToList();
         }
@@ -49,7 +48,7 @@ namespace AspSampleAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CommentOutputDTO>> GetCommentAsync([FromRoute] int id)
         {
-            var comment = await _commentStore.FindByIdAsync(id);
+            var comment = await _commentStore.FindAsync(id);
             if (comment is null)
             {
                 return NotFound();
@@ -63,11 +62,11 @@ namespace AspSampleAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentOutputDTO>> CreateCommentAsync([FromBody] CommentCreateInputDTO commentDTO)
         {
-            if (!_userStore.UserExists((int)commentDTO.AuthorId!))
+            if (!_userStore.EntityExists((int)commentDTO.AuthorId!))
             {
                 ModelState.AddModelError(nameof(commentDTO.AuthorId), "No user exists with the provided Author Id.");
             }
-            if (!_postStore.PostExists((int)commentDTO.PostId!))
+            if (!_postStore.EntityExists((int)commentDTO.PostId!))
             {
                 ModelState.AddModelError(nameof(commentDTO.PostId), "No post exists with the provided Post Id.");
             }
@@ -96,7 +95,7 @@ namespace AspSampleAPI.Controllers
                 return ValidationProblem(ModelState);
             }
 
-            var comment = await _commentStore.FindByIdAsync(id);
+            var comment = await _commentStore.FindAsync(id);
             if (comment is null)
             {
                 return NotFound();

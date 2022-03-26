@@ -1,117 +1,73 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AspServerData
 {
-    public class PostStore : IPostStore
+    public class PostStore : EntityStore<Post>, IPostStore
     {
-
-        #region Dependencies
-
-        private readonly ApplicationDbContext _dbContext;
-
-        #endregion
 
         #region Constructor
 
-        public PostStore(ApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        public PostStore(ApplicationDbContext dbContext) : base(dbContext, dbContext.Posts)
+        { }
 
         #endregion
 
-        #region Implementation
 
-        #region Read
-
-        /// <summary>
-        /// Get Post by Id, if exists.
-        /// </summary>
-        public async Task<Post?> FindByIdAsync(int id)
-        {
-            return await _dbContext.Posts.FindAsync(id);
-        }
+        #region Interface Implementation
 
         /// <summary>
-        /// Get Post by id, including all relational data; if any exists.
+        /// Returns a list of posts - including authors - by page and count; default is 30 posts per page.
         /// </summary>
-        public async Task<Post?> FindAndNavigateByIdAsync(int id, bool track = false)
-        {
-            IQueryable<Post> query = _dbContext.Posts.Include(p => p.User)
-                                                     .Include(p => p.Comments)
-                                                        .ThenInclude(c => c.User)
-                                                     .AsSplitQuery();
-            if (!track)
-            {
-                query = query.AsNoTracking();
-            }
-            return await query.FirstOrDefaultAsync(p => p.PostId == id);
-        }
-
-        /// <summary>
-        /// Returns a list of posts by page and count; default is 30 posts per page.
-        /// </summary>
-        public async Task<List<Post>> ListPostsAsync(int page = 1, int perPage = 30, bool includeUser = false)
+        public async Task<List<Post>> ListPostsWithAuthorsAsync(int page = 1, int perPage = 30)
         {
             perPage = perPage > 100 ? 100 : perPage;
 
-            IQueryable<Post> query = includeUser ? _dbContext.Posts.Include(p => p.User) : _dbContext.Posts;
-
-            return await query.OrderByDescending(p => p.DatePosted)
-                              .Skip((page - 1) * perPage)
-                              .Take(perPage)
-                              .AsNoTracking()
-                              .ToListAsync();
+            return await GetOrderedQuery().Include(p => p.User)
+                                          .Skip((page - 1) * perPage)
+                                          .Take(perPage)
+                                          .AsNoTracking()
+                                          .ToListAsync();
         }
 
         #endregion
 
-        #region Create, Update, Delete, etc..
-
-        /// <summary>
-        /// Creates a new post.
-        /// </summary>
-        public async Task<Post> CreateAsync(Post post)
-        {
-            _dbContext.Posts.Add(post);
-            await _dbContext.SaveChangesAsync();
-
-            return post;
-        }
+        #region Overriden Methods
 
         /// <summary>
         /// Update post data.
         /// </summary>
-        public async Task<bool> UpdateAsync(Post post)
+        public override async Task<bool> UpdateAsync(Post post)
         {
-            _dbContext.Entry(post).State = EntityState.Modified;
-            post.LastEdited = DateTime.UtcNow;
-
-            return await _dbContext.SaveChangesAsync() > 0;
-        }
-
-        /// <summary>
-        /// Delete post by id.
-        /// </summary>
-        public async Task<DeleteResult> DeleteAsync(int id)
-        {
-            var post = await _dbContext.Posts.FindAsync(id);
-            if (post is null)
+            bool isSuccessful = await base.UpdateAsync(post);
+            if (isSuccessful)
             {
-                return DeleteResult.EntityNotFound;
+                post.LastEdited = DateTime.UtcNow;
             }
-
-            _dbContext.Posts.Remove(post);
-            return await _dbContext.SaveChangesAsync() > 0 ? DeleteResult.Success : DeleteResult.Failed;
+            return isSuccessful;
         }
 
         #endregion
 
-        #region Helper Methods
+        #region Abstract Implementation
 
-        public bool PostExists(int id) => _dbContext.Posts.Any(p => p.PostId == id);
+        protected override Expression<Func<Post, bool>> HasKey(int key)
+        {
+            return p => p.PostId == key;
+        }
 
-        #endregion
+        protected override IOrderedQueryable<Post> GetOrderedQuery()
+        {
+            return DbSet.OrderByDescending(p => p.DatePosted);
+        }
+
+        protected override IQueryable<Post> GetNavigationQuery()
+        {
+            return DbSet.Include(p => p.User)
+                        .Include(p => p.Comments)
+                           .ThenInclude(c => c.User)
+                        .AsSplitQuery();
+        }
 
         #endregion
 
