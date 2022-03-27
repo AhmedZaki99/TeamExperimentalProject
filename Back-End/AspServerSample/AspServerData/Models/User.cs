@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AspServerData
 {
-    [Index(nameof(UserName), IsUnique = true)]
-    [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(NormalizedUserName), IsUnique = true)]
+    [Index(nameof(NormalizedEmail), IsUnique = true)]
     public class User
     {
         public int UserId { get; set; }
@@ -14,18 +14,26 @@ namespace AspServerData
         [Required]
         [MaxLength(256)]
         public string UserName { get; set; }
+        [Required]
+        public string NormalizedUserName { get; set; }
 
         public string PasswordHash { get; set; }
+
 
         [Required]
         [MaxLength(256)]
         public string Email { get; set; }
+        [Required]
+        public string NormalizedEmail { get; set; }
+
         public bool EmailConfirmed { get; set; }
+
 
         [MaxLength(256)]
         public string FirstName { get; set; }
         [MaxLength(256)]
         public string LastName { get; set; }
+
 
         [Required]
         [Precision(0)]

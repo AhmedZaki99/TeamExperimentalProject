@@ -33,7 +33,8 @@ namespace AspServerData
         {
             IQueryable<User> query = !track ? DbSet.AsNoTracking() : DbSet;
 
-            return await query.FirstOrDefaultAsync(u => u.UserName == username);
+            username = username.ToUpper();
+            return await query.FirstOrDefaultAsync(u => u.NormalizedUserName == username);
         }
 
         /// <summary>
@@ -46,7 +47,9 @@ namespace AspServerData
             {
                 query = query.AsNoTracking();
             }
-            return await query.FirstOrDefaultAsync(u => u.UserName == username);
+
+            username = username.ToUpper();
+            return await query.FirstOrDefaultAsync(u => u.NormalizedUserName == username);
         }
 
         #endregion
@@ -78,7 +81,8 @@ namespace AspServerData
         /// </summary>
         public async Task<DeleteResult> DeleteAsync(string username)
         {
-            var user = await DbSet.FirstOrDefaultAsync(u => u.UserName == username);
+            username = username.ToUpper();
+            var user = await DbSet.FirstOrDefaultAsync(u => u.NormalizedUserName == username);
             if (user is null)
             {
                 return DeleteResult.EntityNotFound;
@@ -94,7 +98,8 @@ namespace AspServerData
         /// </summary>
         public async Task<LoginResult> LoginAsync(string username, string password)
         {
-            var user = await DbSet.FirstOrDefaultAsync(u => u.UserName == username);
+            username = username.ToUpper();
+            var user = await DbSet.FirstOrDefaultAsync(u => u.NormalizedUserName == username);
             if (user is null)
             {
                 return LoginResult.UserNotFound;
@@ -119,9 +124,22 @@ namespace AspServerData
 
         #region Helper Methods
 
-        public bool UserNameExists(string username) => DbSet.Any(u => u.UserName == username);
-        public bool UserEmailExists(string email) => DbSet.Any(u => u.Email == email);
-        public bool UserNameOrEmailExists(string username, string email) => DbSet.Any(u => u.UserName == username || u.Email == email);
+        public bool UserNameExists(string username)
+        {
+            username = username.ToUpper();
+            return DbSet.Any(u => u.NormalizedUserName == username);
+        }
+        public bool UserEmailExists(string email)
+        {
+            email = email.ToUpper();
+            return DbSet.Any(u => u.NormalizedEmail == email);
+        }
+        public bool UserNameOrEmailExists(string username, string email)
+        {
+            username = username.ToUpper();
+            email = email.ToUpper();
+            return DbSet.Any(u => u.NormalizedUserName == username || u.NormalizedEmail == email);
+        }
 
         #endregion
 
