@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace ASPNetCoreData
+namespace AspServerData
 {
     public class ApplicationDbContext : DbContext
     {
@@ -36,21 +36,19 @@ namespace ASPNetCoreData
                 .HasOne(c => c.User)
                 .WithMany(u => u.Comments)
                 .OnDelete(DeleteBehavior.ClientCascade);
+
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.NormalizedUserName)
+                .HasComputedColumnSql("UPPER([UserName])", stored: true);
+
+            modelBuilder.Entity<User>()
+                .Property(u => u.NormalizedEmail)
+                .HasComputedColumnSql("UPPER([Email])", stored: true);
         }
 
         #endregion
 
-
-        #region Helper Methods
-
-        public bool UserExists(int id) => Users.Any(u => u.UserId == id);
-        public bool PostExists(int id) => Posts.Any(p => p.PostId == id);
-
-        public bool UserNameExists(string username) => Users.Any(u => u.UserName == username);
-        public bool UserEmailExists(string email) => Users.Any(u => u.Email == email);
-        public bool UserNameOrEmailExists(string username, string email) => Users.Any(u => u.UserName == username || u.Email == email);
-
-        #endregion
 
     }
 }
