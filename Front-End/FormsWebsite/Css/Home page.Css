@@ -1,66 +1,236 @@
-html,
 body {
+  font-family: Arial, Helvetica, sans-serif;
   margin: 0;
+  text-transform: capitalize;
 }
+
+/* Header and Footer */
 
 header,
 footer {
-  background-color: rgb(61, 61, 61);
-  font-size: 18px;
-  /* margin: -10px; */
-  color: rgb(204, 204, 204);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #1a1a1a;
+  color: #eaeced;
+  width: 100%;
 }
 
 header {
-  padding: 10px;
-}
-footer {
-  padding: 10px;
-}
-.h1 {
-  text-align: left;
-  text-transform: uppercase;
-  margin: 10px 10px;
+  height: 80px;
+  line-height: 80px;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  box-shadow: 0 7px 10px 1px #8d8d8d;
 }
 
-.copyright,
-.footer1 {
+footer {
+  height: 250px;
   text-align: center;
-  text-transform: capitalize;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0 -6px 5px -2px #8d8d8d;
 }
-footer div p {
-  margin-right: -35px;
+
+.sp1 {
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  font-size: 50px;
+  text-transform: uppercase;
 }
-.menu li a,
-.sign a {
+
+/* ---------------------------------------------------------- */
+
+/* Menu bar */
+
+nav {
+  position: relative;
+  top: 3px;
+  left: 75%;
+  background-color: #eaeced;
+  width: 150px;
+}
+
+.nav-bar .log,
+.reg,
+.home,
+.about,
+.pr,
+.lang {
   text-decoration: none;
-  color: red;
 }
-.menu,
-.sign {
-  text-align: right;
-  list-style-type: none;
-}
-.sign {
-  padding: 5px;
-}
-menu {
-  background-color: rgb(230, 228, 228);
-  display: inline-block;
-  width: 100%;
-  margin: auto;
-}
-.footer1 ul {
-  list-style-type: none;
-}
-.footer1 a {
-  text-decoration: none;
-  color: rgb(204, 204, 204);
-  background-color: teal;
-  border-bottom: 5px solid rgb(9, 85, 85);
-  display: inline-block;
-  padding: 8px 5px;
-  margin: 5px;
+
+.home,
+.about,
+.lang,
+.pr {
+  background-color: #ed7c21;
+  border-radius: 10px;
+  color: #eaeced;
+  text-align: center;
   width: 100px;
+  z-index: 100;
+}
+/* log css */
+
+ul li .log {
+  position: absolute;
+  top: -80px;
+  right: 100px;
+  color: #eaeced;
+}
+.reg:hover,
+.log:hover {
+  color: #f7882f;
+}
+
+/* ============================== */
+
+/* reg css */
+ul li .reg {
+  position: absolute;
+  top: -80px;
+  right: 30px;
+  color: #eaeced;
+}
+.reg::before {
+  content: "";
+  background-color: #eaeced;
+  width: 2px;
+  height: 15px;
+  position: absolute;
+  top: 0;
+  right: 63px;
+}
+
+/* ============================== */
+
+/* home css */
+.home {
+  position: absolute;
+  top: -50px;
+  left: 150px;
+}
+.home:hover,
+.about:hover,
+.lang:hover,
+.pr:hover {
+  color: #1a1a1a;
+}
+/* ============================== */
+
+/* about css  */
+.about {
+  position: absolute;
+  top: -30px;
+  left: 150px;
+}
+
+/* ============================== */
+
+/* pro css */
+
+.pr {
+  position: absolute;
+  top: -10px;
+  left: 150px;
+}
+
+/* ============================== */
+
+/* lang css */
+
+.lang {
+  position: absolute;
+  top: 10px;
+  left: 150px;
+}
+/* ============================== */
+
+/* search css  */
+.search {
+  position: absolute;
+  top: -80px;
+  left: -300%;
+  width: 300px;
+  height: 20px;
+  border-radius: 10px;
+  border-width: 3px;
+  border-color: #eaeced;
+  font-size: 17px;
+  padding: 4px;
+}
+
+/* ============================== */
+
+/* removing bullets from "li" */
+
+ul li {
+  list-style-type: none;
+  float: right;
+}
+
+/* ---------------------------------------------------------- */
+
+/* articles */
+
+section {
+  background-color: #eaeced;
+  padding: 5px;
+  margin-bottom: 10px;
+  margin-left: 2px;
+  width: 70%;
+  height: 150px;
+  text-align: center;
+  position: relative;
+  top: 10px;
+  left: -20px;
+  border-radius: 20px;
+}
+
+/* ---------------------------------------------------------- */
+
+/* social media links and copyrights */
+
+.fu {
+  position: absolute;
+  bottom: 70%;
+  left: 60%;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.copyright {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+}
+
+.fb,
+.insta,
+.tw {
+  text-decoration: none;
+  color: #eaeced;
+  background-color: #ed7c21;
+  width: 80px;
+  height: 25px;
+  border-radius: 10px;
+  text-align: center;
+  line-height: 25px;
+  border-bottom: 5px solid #eaeced;
+}
+.fb {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+}
+.insta {
+  position: absolute;
+  bottom: 50%;
+  left: 60%;
+}
+
+.tw {
+  position: absolute;
+  bottom: 50%;
+  left: 70%;
 }
