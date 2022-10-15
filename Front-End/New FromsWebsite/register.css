@@ -206,6 +206,10 @@
     color: var(--secColor);
 }
 
+.input:focus {
+    border: none;
+}
+
 
 /* aleart */
 
