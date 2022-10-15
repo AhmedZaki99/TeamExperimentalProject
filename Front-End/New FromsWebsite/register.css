@@ -74,29 +74,54 @@
     border-bottom: 1px solid var(--secColor) ;
 }
 
-.gender input {
-    margin-right:5px;
-}
-
-.countries input {
-    width: 360px;
-}
 
 
-.fname {
-    grid-area: 4 / 1 / 6 / 5 ;
-    display: grid;
-    align-items: center;
-}
 
+
+
+/* gender */
 .gender {
-    grid-area: 16 / 2 / 17 / 6 ;
+    grid-area: 16 / 2 / 17 / 9 ;
+    position: relative;
 }
+
+.gender .male {
+    margin-right: 50px;
+}
+.male::after {
+    content: "male";
+    color: #1b1b1b;
+    position: absolute;
+    bottom: 16px;
+    left: 20px; 
+}
+
+.female::after {
+    content: "female";
+    color: #1b1b1b;
+    position: absolute;
+    bottom: 16px;
+    left: 85px;
+}
+
+/* countries */
+
 .countries {
     grid-area: 14 / 1 / 15 / 9;
     width: 360px;
     display: grid;
     justify-content: center;
+    align-items: center;
+}
+.countries input {
+    width: 360px;
+}
+
+/* inputs  */
+
+.fname {
+    grid-area: 4 / 1 / 6 / 5 ;
+    display: grid;
     align-items: center;
 }
 .lname {
@@ -145,6 +170,8 @@
     border-radius: 10px;
 }
 
+/* sign in link */
+
 .link1 {
     grid-area: 20 / 6 / 21 / 9;
     display: grid;
@@ -152,23 +179,6 @@
     align-items: center;
     
 }
-
-
-/* inputs end */
-
-
-/* hover start */
-
-.reg:hover {
-    background-color: rgba(247, 186, 22, .8);
-}
-
-.link1:hover a {
-    color: var(--secColor);
-}
-
-/* hover end */
-
 
 .link1 a {
     text-decoration: none;
@@ -183,6 +193,34 @@
     bottom: 20px;
     left: 70px;
 }
+
+
+
+/* hover */
+
+.reg:hover {
+    background-color: rgba(247, 186, 22, .8);
+}
+
+.link1:hover a {
+    color: var(--secColor);
+}
+
+
+/* aleart */
+
+
+.aleart {
+    grid-area: 17 / 2 / 18 / 8 ;
+    color: red;
+    font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
 
 
 
