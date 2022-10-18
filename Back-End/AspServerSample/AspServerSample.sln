@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspIdentityData", "AspIdent
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCoreAuth", "..\..\..\Back End Projects\ASPNetDemos\ASPNetCoreAuth\ASPNetCoreAuth.csproj", "{57829653-07DC-41DE-AB45-58BEA9F84836}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNetCore", "..\..\..\Back End Projects\ASPNetDemos\ASPNetCore\ASPNetCore.csproj", "{AFD94B6E-7DB5-40C9-A337-DA08E42FECBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{57829653-07DC-41DE-AB45-58BEA9F84836}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57829653-07DC-41DE-AB45-58BEA9F84836}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57829653-07DC-41DE-AB45-58BEA9F84836}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFD94B6E-7DB5-40C9-A337-DA08E42FECBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFD94B6E-7DB5-40C9-A337-DA08E42FECBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFD94B6E-7DB5-40C9-A337-DA08E42FECBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFD94B6E-7DB5-40C9-A337-DA08E42FECBE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
