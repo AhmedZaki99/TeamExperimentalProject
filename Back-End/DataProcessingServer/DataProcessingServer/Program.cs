@@ -30,8 +30,7 @@ namespace DataProcessingServer
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddControllersWithViews(options =>
-                options.SuppressAsyncSuffixInActionNames = false);
+            builder.Services.AddControllersWithViews();
 
             builder.Services.AddCoreServices()
                 .AddIdentityWithSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));

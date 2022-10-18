@@ -1,6 +1,6 @@
 ﻿namespace DataProcessingCore
 {
-    public enum SignInResult
+    public enum LogInResult
     {
         Success = 0,
         Failed = 1,

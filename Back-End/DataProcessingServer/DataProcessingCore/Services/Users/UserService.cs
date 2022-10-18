@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataProcessingContext;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using System.Security.Claims;
@@ -51,7 +52,7 @@ namespace DataProcessingCore
             return new(errors, OperationError.ExternalError);
         }
 
-        public async Task<SignInResult> SignInAsync(UserSignInInputDto userDto)
+        public async Task<LogInResult> SignInAsync(UserSignInInputDto userDto)
         {
             // Clear the existing external cookie to ensure a clean sign in process
             await _signInManager.SignOutAsync();
@@ -60,14 +61,14 @@ namespace DataProcessingCore
             if (result.Succeeded)
             {
                 _logger.LogInformation("User account '{username}' signed in.", userDto.UserName);
-                return SignInResult.Success;
+                return LogInResult.Success;
             }
             if (result.IsLockedOut)
             {
                 _logger.LogWarning("User account '{username}' locked out.", userDto.UserName);
-                return SignInResult.UserLockedOut;
+                return LogInResult.UserLockedOut;
             }
-            return SignInResult.Failed;
+            return LogInResult.Failed;
         }
 
         public async Task SignOutAsync(ClaimsPrincipal? user)
@@ -78,6 +79,17 @@ namespace DataProcessingCore
             {
                 _logger.LogInformation("User account '{username}' signed out.", _userManager.GetUserName(user)); 
             }
+        }
+
+        #endregion
+
+        #region User Data
+
+        public async Task<UserOutputDto> GetUserDataAsync(ClaimsPrincipal? user)
+        {
+            var appUser = await _userManager.GetUserAsync(user);
+
+            return _mapper.Map<UserOutputDto>(appUser);
         }
 
         #endregion

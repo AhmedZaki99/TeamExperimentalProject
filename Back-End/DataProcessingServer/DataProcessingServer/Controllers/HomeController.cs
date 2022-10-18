@@ -23,18 +23,18 @@ namespace DataProcessingServer.Controllers
 
         public IActionResult Index()
         {
-            return Redirect(UrlSelector.IndexPage);
+            return LocalRedirect(UrlSelector.IndexPage);
         }
 
         public IActionResult About()
         {
-            return View(UrlSelector.AboutPage);
+            return LocalRedirect(UrlSelector.AboutPage);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return Redirect(UrlSelector.ErrorPage);
+            return LocalRedirect(UrlSelector.ErrorPage);
         }
 
         #endregion
