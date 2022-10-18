@@ -5,62 +5,61 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-<style>
-.top{
-    background-color: gray;
-    display: flex;
-    justify-content: center;
-    /* padding-left: 600px;
-    padding-bottom: 500px ; */
-    font-size: x-large;
-    margin: 0.0005px;
+    <style>
+        .top{
+            background-color: gray;
+            display: flex;
+            justify-content: center;
+            /* padding-left: 600px;
+            padding-bottom: 500px ; */
+            font-size: x-large;
+            margin: 0.0005px;
 
-}
-/* form{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-} */
-
-</style>
+        }
+        /* form{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        } */
+    </style>
 </head>
 <body>
     <div class="top">
-        <form action="https://192.168.1.6:5000/api/users/Register" method="post">
+        <form action="https://192.168.1.4:5000/api/users/signup" method="post" id="register">
     
             <label for="Fname">First Name</label>
             <br>
-            <input type="text" name="FirstName" id="Fname" required>
+            <input type="text" name="FirstName" id="firstName" required>
             <br><br>
             <!-- separator -->
             <label for="Lname">Last Name</label>
             <br>
-            <input type="text" name="LastName" id="Lname" required>
+            <input type="text" name="LastName" id="lastName" required>
             <br><br>
             <!-- separator -->
             <label for="Username">Username</label>
             <br>
-            <input type="text" name="Username" id="Username" required>
+            <input type="text" name="Username" id="userName" required>
             <br> <br>
             <!-- separator -->
             <label for="Password">Password</label>
             <br>
-            <input type="password" name="Password" id="Password" required>
+            <input type="password" name="Password" id="password" required>
             <br><br>
             <!-- separator -->
             <label for="confirm pass">Confirm Password</label>
             <br>
-            <input type="password" name="Confirm" id="Confirm pass" required>
+            <input type="password" name="ConfirmPassword" id="confirmPassword" required>
             <br><br>
             <!-- separator -->
             <label for="E-mail">E-mail</label>
             <br>
-            <input type="Email" name="Email" id="E-mail" required>
+            <input type="Email" name="Email" id="email" required>
             <br><br>
             <!-- separator -->
             <label for="Birthdate">Birth Date</label>
             <br>
-            <input type="date" name="BirthDate" required>
+            <input type="date" name="BirthDate" id="birthDate" required>
             <br><br>
             <!-- separator -->
             <input class="btn" type="submit" value="Register">
@@ -70,6 +69,7 @@
         </form>
     </div>
     
-    </body>
-    
-    </html>
+    <script src="/FormsWebsite/Scripts/main.js"></script>
+</body>
+
+</html>
